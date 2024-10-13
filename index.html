@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardik</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 1rem;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            position: relative;
+        }
+
+        .network-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .profile {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Updated size of Hardik's image */
+        .profile img {
+            width: 300px;
+            height: 300px;
+            border-radius: 220px;
+            /* Less rounding for a squarer look */
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        /* Updated size of social icons */
+        .social-icons a img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .social-icons a {
+            margin: 0 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">Hardik Bansal</div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="experience.html">Experience</a>
+            <a href="education.html">Education</a>
+        </nav>
+    </header>
+    <main>
+        <canvas id="network-bg" class="network-bg"></canvas>
+        <div class="profile">
+            <img src="assets/hardik.jpg" alt="Hardik">
+            <h1>Hi 👋, I'm Hardik Bansal</h1>
+            <div class="social-icons">
+                <a
+                    href="https://www.linkedin.com/in/hardik-bansal-1b94a6287?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app">
+                    <img src="assets/linkedin.png" alt="LinkedIn">
+                </a>
+                <a href="https://www.instagram.com/hardikbansal93?igsh=emtmd210ZWNjcGsy&utm_source=qr">
+                    <img src="assets/insta.jpeg" alt="Instagram">
+                </a>
+                <a href="https://github.com/hardikb321">
+                    <img src="assets/github.png" alt="GitHub">
+                </a>
+                <a href="https://codeforces.com/profile/cse230001031">
+                    <img src="assets/codeforces.png" alt="Codeforces">
+                </a>
+            </div>
+        </div>
+    </main>
+    <script>
+        const canvas = document.getElementById('network-bg');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const particlesArray = [];
+        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24'];
+        const particleCount = 100;
+        const connectionDistance = 100;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > width) this.speedX *= -1;
+                if (this.y < 0 || this.y > height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < particleCount; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+
+                for (let j = i + 1; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / connectionDistance})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+    </script>
+</body>
+
+</html>
